@@ -1,29 +1,48 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faFontAwesome,
-  faPenToSquare,
-  faTrash,
-} from "@fortawesome/free-solid-svg-icons";
+import { useForm } from "react-hook-form";
 import "./TaskForm.css";
+import { TaskFormSchema, TaskFormType, TaskType } from "../lib/definition";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-function TaskForm() {
+interface PropsInterface {
+  task?: TaskType;
+  onSubmit: (data: TaskFormType) => void;
+}
+
+function TaskForm(props: PropsInterface) {
+  const { task, onSubmit } = props;
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<TaskFormType>({
+    resolver: zodResolver(TaskFormSchema),
+    defaultValues: task ?? {
+      text: "",
+      dueDate: "",
+      priority: 1,
+    },
+  });
+
   return (
-    <form className="add-form">
+    <form className="add-form" onSubmit={handleSubmit(onSubmit)}>
       <div className="form-control">
         <label htmlFor="text">Text </label>
-        <input id="text" type="text" />
+        <input id="text" type="text" {...register("text")} />
+        {errors.text && <span>{errors.text.message}</span>}
       </div>
       <div className="form-control">
         <label htmlFor="dueDate">Date &amp; Time </label>
-        <input id="dueDate" type="datetime-local" />
+        <input id="dueDate" type="datetime-local" {...register("dueDate")} />
+        {errors.dueDate && <span>{errors.dueDate.message}</span>}
       </div>
       <div className="div form-control">
         <label htmlFor="priority">Priority </label>
-        <select name="priority" id="priority">
+        <select id="priority" {...register("priority")}>
           <option value={1}>High</option>
           <option value={2}>Mid</option>
           <option value={3}>Low</option>
         </select>
+        {errors.priority && <span>{errors.priority.message}</span>}
       </div>
       <button type="submit" className="btn btn-block">
         Save Task
