@@ -6,10 +6,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 interface PropsInterface {
   task?: TaskType;
   onSubmit: (data: TaskFormType) => void;
+  isLoading: boolean;
 }
 
 function TaskForm(props: PropsInterface) {
-  const { task, onSubmit } = props;
+  const { task, onSubmit, isLoading } = props;
   const {
     register,
     handleSubmit,
@@ -28,12 +29,14 @@ function TaskForm(props: PropsInterface) {
       <div className="form-control">
         <label htmlFor="text">Text </label>
         <input id="text" type="text" {...register("text")} />
-        {errors.text && <span>{errors.text.message}</span>}
+        {errors.text && <span className="error">{errors.text.message}</span>}
       </div>
       <div className="form-control">
         <label htmlFor="dueDate">Date &amp; Time </label>
         <input id="dueDate" type="datetime-local" {...register("dueDate")} />
-        {errors.dueDate && <span>{errors.dueDate.message}</span>}
+        {errors.dueDate && (
+          <span className="error">{errors.dueDate.message}</span>
+        )}
       </div>
       <div className="div form-control">
         <label htmlFor="priority">Priority </label>
@@ -42,10 +45,12 @@ function TaskForm(props: PropsInterface) {
           <option value={2}>Mid</option>
           <option value={3}>Low</option>
         </select>
-        {errors.priority && <span>{errors.priority.message}</span>}
+        {errors.priority && (
+          <span className="error">{errors.priority.message}</span>
+        )}
       </div>
       <button type="submit" className="btn btn-block">
-        Save Task
+        {isLoading ? "Saving..." : "Save Task"}
       </button>
     </form>
   );
